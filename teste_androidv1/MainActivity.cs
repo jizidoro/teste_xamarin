@@ -14,6 +14,7 @@ using System.Text;
 using teste_androidv1.Model;
 using teste_androidv1.ViewModel;
 
+//main
 namespace teste_androidv1
 {
 	[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
