@@ -28,14 +28,14 @@ namespace teste_androidv1
         TextView Titulo;
         TextView NomeJhoni;
 
-        string dbPath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "bancoteste.db3");
+        readonly string dbPath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "bancoteste.db3");
 
-        protected override void OnCreate(Bundle bundle)
+        protected async override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.activity_main);
 
-            GetAllData();
+            
 
             Button BotaoTelaMain = FindViewById<Button>(Resource.Id.botao_tela_main);
             BotaoTelaMain.Click += (sender, e) => {
@@ -55,56 +55,71 @@ namespace teste_androidv1
             NomeJhoni.SetTextSize(ComplexUnitType.Dip, 30);
             NomeJhoni.SetTextColor(Color.ParseColor("#000fff"));
 
+
+            Titulo.Text = await GetAllData();
         }
 
 
-        private void GetAllData()
+        private async System.Threading.Tasks.Task<string> GetAllData()
         {
             CreateDatabase();
             GetDataSetCategory();
-            AddDataToMyDbAsync();
+            NomeJhoni.Text = await AddDataToMyDbAsync();
+
+            return "terminou";
         }
 
-        private async System.Threading.Tasks.Task AddDataToMyDbAsync()
+        private async System.Threading.Tasks.Task<string> AddDataToMyDbAsync()
         {
             var db = new SQLiteAsyncConnection(dbPath);
 
             foreach (var item in ResultCategory)
             {
-                Categoria itemCategory = new Categoria();
-                itemCategory.Id = item.id;
-                itemCategory.Name = item.name;
+                Categoria itemCategory = new Categoria
+                {
+                    Id = item.id,
+                    Name = item.name
+                };
                 await db.InsertOrReplaceAsync(itemCategory);
             }
             //int i = 0;
             foreach (var item in ResultPromotion)
             {
-                Promotion itemPromotion = new Promotion();
-                //itemPromotion.id = item.Id;
-                itemPromotion.Name = item.name;
-                itemPromotion.CategoryId = item.category_id;
+                Promotion itemPromotion = new Promotion
+                {
+                    //Id = null,
+                    Name = item.name,
+                    CategoryId = item.category_id
+                };
                 foreach (var subItem in item.Policies)
                 {
-                    Policies itemPolicies = new Policies();
-                    itemPolicies.Min = subItem.min;
-                    itemPolicies.Discount = subItem.discount;
+                    Policies itemPolicies = new Policies
+                    {
+                        //Id = null,
+                        Min = subItem.min,
+                        Discount = subItem.discount
+                    };
                     await db.InsertOrReplaceAsync(itemPolicies);
-                    itemPromotion.PoliciesId = (int)itemPolicies.Id;
+                    //itemPromotion.PoliciesId = (int)itemPolicies.Id;
                 }
                 await db.InsertOrReplaceAsync(itemPromotion);
             }
 
             foreach (var item in ResultProduct)
             {
-                Product itemProduct = new Product();
-                //itemProduct.id = item.Id;
-                itemProduct.Name = item.name;
-                itemProduct.Photo = ConvertPngToJpeg(item.photo);
-                itemProduct.Price = item.price;
-                itemProduct.Description = item.description;
-                itemProduct.CategoryId = item.category_id;
+                Product itemProduct = new Product
+                {
+                    //Id = null,
+                    Name = item.name,
+                    Photo = ConvertPngToJpeg(item.photo),
+                    Price = item.price,
+                    Description = item.description,
+                    CategoryId = item.category_id
+                };
                 await db.InsertOrReplaceAsync(itemProduct);
             }
+
+            return "terminou";
 
             /*
             var dadosToken = db.Table<Product>();
@@ -116,25 +131,51 @@ namespace teste_androidv1
         private byte[] ConvertPngToJpeg(string url)
         {
             Bitmap imageBitmap = null;
+            //Bitmap scaledimageBitmap = null;
+
 
             using (var webClient = new WebClient())
             {
                 var imageBytes = webClient.DownloadData(url);
                 if (imageBytes != null && imageBytes.Length > 0)
                 {
+                    
                     imageBitmap = BitmapFactory.DecodeByteArray(imageBytes, 0, imageBytes.Length);
+                    //scaledimageBitmap = Bitmap.CreateScaledBitmap(imageBitmap, 100, 100, true);
                 }
             }
 
-            //Create memory stream
-            using (MemoryStream outStream = new MemoryStream())
+            var options = new BitmapFactory.Options()
             {
-                //Save the image as Jpeg
-                imageBitmap.Compress(Bitmap.CompressFormat.Jpeg, 50, outStream);
-                byte[] bytes = outStream.ToArray();
-                return bytes;
-                //string base64String = Convert.ToBase64String(bytes);
-                //return base64String;
+                InJustDecodeBounds = false,
+                InPurgeable = true,
+            };
+
+
+            if (imageBitmap != null)
+            {
+                var sourceSizeHeight = (int)imageBitmap.GetBitmapInfo().Height;
+                var sourceSizeWidth = (int)imageBitmap.GetBitmapInfo().Width;
+                double scale = (double)NumeroVersao.Width / sourceSizeWidth;
+
+                //var width = (int)(scale * sourceSizeWidth);
+                var height = (int)(scale * sourceSizeHeight);
+
+                using (var bitmapScaled = Bitmap.CreateScaledBitmap(imageBitmap, height, NumeroVersao.Width , true))
+                {
+                    using (MemoryStream outStream = new MemoryStream())
+                    {
+
+                        imageBitmap.Compress(Bitmap.CompressFormat.Jpeg, 50, outStream);
+                        byte[] bytes = outStream.ToArray();
+                        imageBitmap.Recycle();
+                        return bytes;
+                    }
+                }
+            }
+            else
+            {
+                return null;
             }
         }
 
@@ -214,22 +255,28 @@ namespace teste_androidv1
         {
             try
             {
-                var connection = new SQLiteConnection(System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "bancoteste.db3"));
-                connection.CreateTable<Categoria>();
-                connection.CreateTable<Policies>();
-                connection.CreateTable<Product>();
-                connection.CreateTable<Promotion>();
-                connection.CreateTable<Sessao>();
-                connection.CreateTable<WordT>();
+                //var connection = new SQLiteConnection(System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "bancoteste.db3"));
 
-                connection.Execute("DELETE FROM Categoria");
-                connection.Execute("DELETE FROM Policies");
-                connection.Execute("DELETE FROM Product");
-                connection.Execute("DELETE FROM Promotion");
-                connection.Execute("DELETE FROM Sessao");
-                connection.Execute("DELETE FROM WordT");
+                using (var connection = new SQLite.SQLiteConnection(System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "bancoteste.db3")))
+                {
+                    connection.CreateTable<Categoria>(SQLite.CreateFlags.ImplicitPK | SQLite.CreateFlags.AutoIncPK);
+                    connection.CreateTable<Policies>(SQLite.CreateFlags.ImplicitPK | SQLite.CreateFlags.AutoIncPK);
+                    connection.CreateTable<Product>(SQLite.CreateFlags.ImplicitPK | SQLite.CreateFlags.AutoIncPK);
+                    connection.CreateTable<Promotion>(SQLite.CreateFlags.ImplicitPK | SQLite.CreateFlags.AutoIncPK);
+                    connection.CreateTable<Sessao>(SQLite.CreateFlags.ImplicitPK | SQLite.CreateFlags.AutoIncPK);
 
-                connection.Close();
+                    connection.Execute("DELETE FROM Categoria");
+                    connection.Execute("DELETE FROM Policies");
+                    connection.Execute("DELETE FROM Product");
+                    connection.Execute("DELETE FROM Promotion");
+                    connection.Execute("DELETE FROM Sessao");
+                }
+
+
+
+
+
+                //connection.Close();
                 //Toast.MakeText(this, "Database created", ToastLength.Short).Show();
                 return "Database created";
             }

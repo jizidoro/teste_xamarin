@@ -23,110 +23,23 @@ namespace teste_androidv1.Model
         //"category_id": 1
 
 
-        /*
-        [PrimaryKey]
-        public int? id { get; set; }
+        [Column("Id"), PrimaryKey, NotNull, AutoIncrement]
+        public int? Id { get; set; }
 
-        public string name { get; set; }
+        [Column("Name")]
+        public string Name { get; set; }
 
+        [Column("Description")]
         public string Description { get; set; }
 
-        public string Photo { get; set; }
+        [Column("Photo")]
+        public byte[] Photo { get; set; }
 
+        [Column("Price")]
         public double Price { get; set; }
 
-        public int? categoryId { get; set; }
-
-        public override string ToString() => string.Format("[Product:id={0}, name={1}, description={2}, photo={3}, price={4}, categoryId={5}]", id, name, description, photo, price , categoryId);
-        */
-
-        private int _Id;
-        [Column("Id")]
-        [PrimaryKey]
-        [NotNull]
-        [AutoIncrement]
-        public int Id
-        {
-            get { return _Id; }
-            set
-            {
-                if (_Id != value)
-                {
-                    _Id = value;
-                }
-            }
-        }
-
-        private string _Name;
-        [Column("Name")]
-        public string Name
-        {
-            get { return _Name; }
-            set
-            {
-                if (_Name != value)
-                {
-                    _Name = value;
-                }
-            }
-        }
-
-        private string _Description;
-        [Column("Description")]
-        public string Description
-        {
-            get { return _Description; }
-            set
-            {
-                if (_Description != value)
-                {
-                    _Description = value;
-                }
-            }
-        }
-
-
-        private byte[] _Photo;
-        [Column("Photo")]
-        public byte[] Photo
-        {
-            get { return _Photo; }
-            set
-            {
-                if (_Photo != value)
-                {
-                    _Photo = value;
-                }
-            }
-        }
-
-        private double _Price;
-        [Column("Price")]
-        public double Price
-        {
-            get { return _Price; }
-            set
-            {
-                if (_Price != value)
-                {
-                    _Price = value;
-                }
-            }
-        }
-
-        private int? _CategoryId;
         [Column("CategoryId")]
-        public int? CategoryId
-        {
-            get { return _CategoryId; }
-            set
-            {
-                if (_CategoryId != value)
-                {
-                    _CategoryId = value;
-                }
-            }
-        }
+        public int? CategoryId { get; set; }
 
     }
 }

@@ -19,8 +19,8 @@ namespace teste_androidv1.Model
 
         public MyHolder(View v)
         {
-            this.NameTxt = v.FindViewById<TextView>(Resource.Id.nameTxt);
-            this.Img = v.FindViewById<ImageView>(Resource.Id.playerImg);
+            this.NameTxt = v.FindViewById<TextView>(Resource.Id.txtName);
+            this.Img = v.FindViewById<ImageView>(Resource.Id.imgProduct);
         }
     }
 }

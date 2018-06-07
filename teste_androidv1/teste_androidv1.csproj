@@ -60,13 +60,11 @@
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
     <Compile Include="ListaProdutosActivity.cs" />
-    <Compile Include="Model\WordT.cs" />
     <Compile Include="Model\Sessao.cs" />
     <Compile Include="ViewModel\CategoryViewModel.cs" />
     <Compile Include="ViewModel\PromotionViewModel.cs" />
     <Compile Include="ViewModel\ProductViewModel.cs" />
     <Compile Include="ViewModel\PoliciesViewModel.cs" />
-    <Compile Include="Model\Player.cs" />
     <Compile Include="Model\Category.cs" />
     <Compile Include="Model\Policies.cs" />
     <Compile Include="Model\Promotion.cs" />
@@ -140,15 +138,6 @@
     <PackageReference Include="Xamarin.Android.Support.Design" Version="27.0.2" />
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat">
       <Version>27.0.2</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.FFImageLoading.Forms">
-      <Version>2.4.1.823</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms">
-      <Version>2.4.1.823</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.FFImageLoading.Transformations">
-      <Version>2.4.1.823</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

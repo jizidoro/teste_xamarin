@@ -22,7 +22,6 @@ namespace teste_androidv1
     class MyAdapter : ArrayAdapter
     {
         private Context c;
-        private readonly List<Player> players;
         private readonly List<ProductViewModel> products;
         private LayoutInflater inflater;
         private readonly int resource;
@@ -48,10 +47,10 @@ namespace teste_androidv1
 
             MyHolder holder = new MyHolder(convertView)
             {
-                NameTxt = { Text = players[position].Name }
+                NameTxt = { Text = Products[position].Name }
 
             };
-            holder.Img.SetImageResource(players[position].Image);
+            holder.Img.SetImageResource(Products[position].Image);
 
             convertView.SetBackgroundColor(Color.LightGreen);
 
@@ -66,7 +65,14 @@ namespace teste_androidv1
         private class MyViewHolder : Java.Lang.Object
         {
             public TextView Name { get; set; }
-            public TextView Description { get; set; }
+            public TextView Promo { get; set; }
+            public TextView Price { get; set; }
+            public TextView Qtd { get; set; }
+
+            public Button BtnPlus { get; set; }
+            public Button BtnLess { get; set; }
+            public Button BtnFavorite { get; set; }
+
             public ImageView Image { get; set; }
         }
 
@@ -94,15 +100,31 @@ namespace teste_androidv1
                 }
 
                 view = convertView;
-                holder.Name = view.FindViewById<TextView>(Resource.Id.nameTxt);
+
+                holder.Image = view.FindViewById<ImageView>(Resource.Id.imgProduct);
+
+                holder.Name = view.FindViewById<TextView>(Resource.Id.txtName);
+                holder.Promo = view.FindViewById<TextView>(Resource.Id.txtPromo);
+                holder.Price = view.FindViewById<TextView>(Resource.Id.txtPrice);
+                holder.Qtd = view.FindViewById<TextView>(Resource.Id.txtQtd);
+
+                holder.BtnPlus = view.FindViewById<Button>(Resource.Id.btnPlus);
+                holder.BtnLess = view.FindViewById<Button>(Resource.Id.btnLess);
+                holder.BtnFavorite = view.FindViewById<Button>(Resource.Id.btnFavorite);
+
                 //holder.Description = view.FindViewById<TextView>(Resource.Id.textView2);
-                holder.Image = view.FindViewById<ImageView>(Resource.Id.playerImg);
+
                 view.Tag = holder;
                 //view.SetBackgroundColor(Color.LightGreen);
             }
 
 
             holder.Name.Text = products[position].name;
+            holder.Promo.Text = products[position].price.ToString();
+            holder.Price.Text = products[position].price.ToString();
+            //holder.Qtd.Text = products[position].name;
+            holder.Qtd.Text = "0";
+
             //holder.Description.Text = Descriptions[position];
             var imageBitmap = BitmapFactory.DecodeByteArray(products[position].photoBite, 0, products[position].photoBite.Length);
 

@@ -21,7 +21,6 @@ namespace teste_androidv1
 
         private MyAdapter _adapter;
         private ListView _lv;
-        private List<Player> _players;
         private List<ProductViewModel> _product;
 
         protected async override void OnCreate(Bundle bundle)
@@ -32,7 +31,7 @@ namespace teste_androidv1
             SetContentView(Resource.Layout.activity_lista_produtos);
 
             _lv = FindViewById<ListView>(Resource.Id.lv);
-            await GetPlayersAsync();
+            await GetProductsAsync();
             _adapter = new MyAdapter(this, Resource.Layout.model, _product);
 
             _lv.Adapter = _adapter;
@@ -42,42 +41,36 @@ namespace teste_androidv1
 
         void Lv_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
-            Toast.MakeText(this, _players[e.Position].Name, ToastLength.Short).Show();
+            //Toast.MakeText(this, _Products[e.Position].Name, ToastLength.Short).Show();
         }
 
-        private async System.Threading.Tasks.Task<List<Player>> GetPlayersAsync()
+        private async System.Threading.Tasks.Task<List<ProductViewModel>> GetProductsAsync()
         {
             string dbPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "bancoteste.db3");
             var db = new SQLiteAsyncConnection(dbPath);
-            List<Product> list = await db.Table<Product>().ToListAsync();
-            var AllProduct = list;
+            List<Product> listProduct = await db.Table<Product>().ToListAsync();
+            List<Promotion> listPromotion = await db.Table<Promotion>().ToListAsync();
+            List<Policies> listPolicies = await db.Table<Policies>().ToListAsync();
+            var AllProduct = listProduct;
+            var AllPromotion = listPromotion;
+            var AllPolicies = listPolicies;
 
             _product = new List<ProductViewModel>();
 
             foreach (var item in AllProduct)
             {
-                ProductViewModel itemProduct = new ProductViewModel();
-                //itemProduct. = item.Id;
-                itemProduct.name = item.Name;
-                itemProduct.photoBite = item.Photo;
-                itemProduct.price = item.Price;
-                itemProduct.category_id = item.CategoryId;
-                itemProduct.description = item.Description;
+                ProductViewModel itemProduct = new ProductViewModel
+                {
+                    name = item.Name,
+                    photoBite = item.Photo,
+                    price = item.Price,
+                    category_id = item.CategoryId,
+                    description = item.Description
+                };
                 _product.Add(itemProduct);
             }
 
-
-            _players = new List<Player>()
-            {
-                new Player("David De Gea",Resource.Mipmap.ic_launcher),
-                new Player("Juan Mata",Resource.Mipmap.ic_launcher),
-                new Player("Ander Herera",Resource.Mipmap.ic_launcher),
-                new Player("Eden Hazard",Resource.Mipmap.ic_launcher),
-                new Player("John Terry",Resource.Mipmap.ic_launcher),
-                new Player("Michael Carrick",Resource.Mipmap.ic_launcher)
-            };
-
-            return _players;
+            return _product;
         }
     }
 }
