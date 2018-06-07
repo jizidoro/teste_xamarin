@@ -9,7 +9,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using SQLite.Net.Attributes;
+using SQLite;
 
 namespace teste_androidv1.Model
 {
@@ -36,5 +36,9 @@ namespace teste_androidv1.Model
 
         [Column("PoliciesId")]
         public int PoliciesId { get; set; }
+        
+        //[OneToMany]
+        //public List<Policies> PoliciesId { get; set; }
+
     }
 }

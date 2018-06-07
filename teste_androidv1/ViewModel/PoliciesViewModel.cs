@@ -9,7 +9,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using SQLite.Net.Attributes;
+using SQLite;
 
 namespace teste_androidv1.ViewModel
 {
@@ -19,9 +19,9 @@ namespace teste_androidv1.ViewModel
         //"min": 2,
         //"discount": 10.0
         
-        public int min { get; set; }
+        public int Min { get; set; }
 
-        public double discount { get; set; }
+        public double Discount { get; set; }
 
     }
 }

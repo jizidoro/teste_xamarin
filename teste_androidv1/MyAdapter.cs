@@ -119,14 +119,14 @@ namespace teste_androidv1
             }
 
 
-            holder.Name.Text = products[position].name;
-            holder.Promo.Text = products[position].price.ToString();
-            holder.Price.Text = products[position].price.ToString();
+            holder.Name.Text = products[position].Name;
+            holder.Promo.Text = products[position].Price.ToString();
+            holder.Price.Text = products[position].Price.ToString();
             //holder.Qtd.Text = products[position].name;
             holder.Qtd.Text = "0";
 
             //holder.Description.Text = Descriptions[position];
-            var imageBitmap = BitmapFactory.DecodeByteArray(products[position].photoBite, 0, products[position].photoBite.Length);
+            var imageBitmap = BitmapFactory.DecodeByteArray(products[position].PhotoBite, 0, products[position].PhotoBite.Length);
 
             holder.Image.SetImageBitmap(imageBitmap);
 

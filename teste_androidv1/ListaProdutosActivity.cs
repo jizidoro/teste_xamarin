@@ -61,11 +61,11 @@ namespace teste_androidv1
             {
                 ProductViewModel itemProduct = new ProductViewModel
                 {
-                    name = item.Name,
-                    photoBite = item.Photo,
-                    price = item.Price,
-                    category_id = item.CategoryId,
-                    description = item.Description
+                    Name = item.Name,
+                    PhotoBite = item.Photo,
+                    Price = item.Price,
+                    Category_id = item.CategoryId,
+                    Description = item.Description
                 };
                 _product.Add(itemProduct);
             }

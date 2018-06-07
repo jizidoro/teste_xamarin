@@ -9,7 +9,6 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using SQLite.Net.Attributes;
 
 namespace teste_androidv1.ViewModel
 {
@@ -22,17 +21,17 @@ namespace teste_androidv1.ViewModel
         //"price": 10999.00,
         //"category_id": 1
         
-        public string name { get; set; }
+        public string Name { get; set; }
 
-        public string description { get; set; }
+        public string Description { get; set; }
 
-        public string photo { get; set; }
+        public string Photo { get; set; }
 
-        public byte[] photoBite { get; set; }
+        public byte[] PhotoBite { get; set; }
 
-        public double price { get; set; }
+        public double Price { get; set; }
 
-        public int? category_id { get; set; }
+        public int? Category_id { get; set; }
 
     }
 }

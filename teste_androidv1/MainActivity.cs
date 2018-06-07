@@ -77,8 +77,8 @@ namespace teste_androidv1
             {
                 Categoria itemCategory = new Categoria
                 {
-                    Id = item.id,
-                    Name = item.name
+                    Id = item.Id,
+                    Name = item.Name
                 };
                 await db.InsertOrReplaceAsync(itemCategory);
             }
@@ -88,16 +88,16 @@ namespace teste_androidv1
                 Promotion itemPromotion = new Promotion
                 {
                     //Id = null,
-                    Name = item.name,
-                    CategoryId = item.category_id
+                    Name = item.Name,
+                    CategoryId = item.Category_id
                 };
                 foreach (var subItem in item.Policies)
                 {
                     Policies itemPolicies = new Policies
                     {
                         //Id = null,
-                        Min = subItem.min,
-                        Discount = subItem.discount
+                        Min = subItem.Min,
+                        Discount = subItem.Discount
                     };
                     await db.InsertOrReplaceAsync(itemPolicies);
                     //itemPromotion.PoliciesId = (int)itemPolicies.Id;
@@ -110,11 +110,11 @@ namespace teste_androidv1
                 Product itemProduct = new Product
                 {
                     //Id = null,
-                    Name = item.name,
-                    Photo = ConvertPngToJpeg(item.photo),
-                    Price = item.price,
-                    Description = item.description,
-                    CategoryId = item.category_id
+                    Name = item.Name,
+                    Photo = ConvertPngToJpeg(item.Photo),
+                    Price = item.Price,
+                    Description = item.Description,
+                    CategoryId = item.Category_id
                 };
                 await db.InsertOrReplaceAsync(itemProduct);
             }

@@ -9,7 +9,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using SQLite.Net.Attributes;
+using SQLite;
 
 namespace teste_androidv1.ViewModel
 {
@@ -19,9 +19,9 @@ namespace teste_androidv1.ViewModel
         //"id": 1,
         //"name": "Televisores"
         
-        public int id { get; set; }
+        public int Id { get; set; }
 
-        public string name { get; set; }
+        public string Name { get; set; }
 
     }
 }
