@@ -9,7 +9,10 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+
 using SQLite;
+using SQLiteNetExtensions.Attributes;
+using teste_androidv1.Model;
 
 namespace teste_androidv1.ViewModel
 {
@@ -28,5 +31,8 @@ namespace teste_androidv1.ViewModel
 
         [Column("Discount")]
         public double Discount { get; set; }
+
+        [ForeignKey(typeof(Promotion))]
+        public int PoliciesId { get; set; }
     }
 }

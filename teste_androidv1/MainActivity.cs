@@ -6,6 +6,7 @@ using Android.Util;
 using Android.Widget;
 using Newtonsoft.Json;
 using SQLite;
+using SQLiteNetExtensions.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,12 +31,10 @@ namespace teste_androidv1
 
         readonly string dbPath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "bancoteste.db3");
 
-        protected async override void OnCreate(Bundle bundle)
+        protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.activity_main);
-
-            
 
             Button BotaoTelaMain = FindViewById<Button>(Resource.Id.botao_tela_main);
             BotaoTelaMain.Click += (sender, e) => {
@@ -43,7 +42,8 @@ namespace teste_androidv1
             };
 
             NumeroVersao = FindViewById<TextView>(Resource.Id.numero_versao);
-            NumeroVersao.Text = "1.0";
+            NumeroVersao.Text = "1.1"; 
+            //NumeroVersao.SetWidth(ComplexUnitType.Dip, 100);
             NumeroVersao.SetTextSize(ComplexUnitType.Dip, 30);
             NumeroVersao.SetTextColor(Color.ParseColor("#000fff"));
 
@@ -55,93 +55,84 @@ namespace teste_androidv1
             NomeJhoni.SetTextSize(ComplexUnitType.Dip, 30);
             NomeJhoni.SetTextColor(Color.ParseColor("#000fff"));
 
-
-            Titulo.Text = await GetAllData();
+            GetAllData();
         }
 
 
-        private async System.Threading.Tasks.Task<string> GetAllData()
+        private void GetAllData()
         {
             CreateDatabase();
             GetDataSetCategory();
-            NomeJhoni.Text = await AddDataToMyDbAsync();
-
-            return "terminou";
+            Titulo.Text =  AddDataToMyDb();
         }
 
-        private async System.Threading.Tasks.Task<string> AddDataToMyDbAsync()
+        private string AddDataToMyDb()
         {
-            var db = new SQLiteAsyncConnection(dbPath);
-
-            foreach (var item in ResultCategory)
+            using (var db = new SQLite.SQLiteConnection(System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "bancoteste.db3")))
             {
-                Categoria itemCategory = new Categoria
+                foreach (var item in ResultCategory)
                 {
-                    Id = item.Id,
-                    Name = item.Name
-                };
-                await db.InsertOrReplaceAsync(itemCategory);
-            }
-            //int i = 0;
-            foreach (var item in ResultPromotion)
-            {
-                Promotion itemPromotion = new Promotion
+                    Categoria itemCategory = new Categoria
+                    {
+                        Id = item.Id,
+                        Name = item.Name
+                    };
+                    db.InsertOrReplace(itemCategory);
+                }
+                //int i = 0;
+                foreach (var item in ResultPromotion)
                 {
-                    //Id = null,
-                    Name = item.Name,
-                    CategoryId = item.Category_id
-                };
-                foreach (var subItem in item.Policies)
-                {
-                    Policies itemPolicies = new Policies
+                    List<Policies> ListPolicies = new List<Policies>();
+                    Promotion itemPromotion = new Promotion
                     {
                         //Id = null,
-                        Min = subItem.Min,
-                        Discount = subItem.Discount
+                        Name = item.Name,
+                        CategoryId = item.Category_id
                     };
-                    await db.InsertOrReplaceAsync(itemPolicies);
-                    //itemPromotion.PoliciesId = (int)itemPolicies.Id;
+                    foreach (var subItem in item.Policies)
+                    {
+                        Policies itemPolicies = new Policies
+                        {
+                            //Id = null,
+                            Min = subItem.Min,
+                            Discount = subItem.Discount
+                        };
+                        db.InsertOrReplace(itemPolicies);
+                        ListPolicies.Add(itemPolicies);
+                    }
+                    db.InsertOrReplace(itemPromotion);
+                    itemPromotion.PoliciesId = ListPolicies;
+                    WriteOperations.UpdateWithChildren(db, itemPromotion);
+                    //db.
                 }
-                await db.InsertOrReplaceAsync(itemPromotion);
-            }
 
-            foreach (var item in ResultProduct)
-            {
-                Product itemProduct = new Product
+                foreach (var item in ResultProduct)
                 {
-                    //Id = null,
-                    Name = item.Name,
-                    Photo = ConvertPngToJpeg(item.Photo),
-                    Price = item.Price,
-                    Description = item.Description,
-                    CategoryId = item.Category_id
-                };
-                await db.InsertOrReplaceAsync(itemProduct);
+                    Product itemProduct = new Product
+                    {
+                        //Id = null,
+                        Name = item.Name,
+                        Photo = ConvertPngToJpeg(item.Photo),
+                        Price = item.Price,
+                        Description = item.Description,
+                        CategoryId = item.Category_id
+                    };
+                    db.InsertOrReplace(itemProduct);
+                }
             }
-
             return "terminou";
-
-            /*
-            var dadosToken = db.Table<Product>();
-            var TokenAtual = await dadosToken.FirstOrDefaultAsync();
-            NomeJhoni.Text = TokenAtual.Name;
-            */
         }
 
         private byte[] ConvertPngToJpeg(string url)
         {
             Bitmap imageBitmap = null;
-            //Bitmap scaledimageBitmap = null;
-
 
             using (var webClient = new WebClient())
             {
                 var imageBytes = webClient.DownloadData(url);
                 if (imageBytes != null && imageBytes.Length > 0)
                 {
-                    
                     imageBitmap = BitmapFactory.DecodeByteArray(imageBytes, 0, imageBytes.Length);
-                    //scaledimageBitmap = Bitmap.CreateScaledBitmap(imageBitmap, 100, 100, true);
                 }
             }
 
@@ -151,21 +142,20 @@ namespace teste_androidv1
                 InPurgeable = true,
             };
 
+            int tamanho = (int)(Resources.DisplayMetrics.Density * 100);
 
             if (imageBitmap != null)
             {
                 var sourceSizeHeight = (int)imageBitmap.GetBitmapInfo().Height;
                 var sourceSizeWidth = (int)imageBitmap.GetBitmapInfo().Width;
-                double scale = (double)NumeroVersao.Width / sourceSizeWidth;
+                double scale = (double)tamanho / sourceSizeWidth;
 
-                //var width = (int)(scale * sourceSizeWidth);
                 var height = (int)(scale * sourceSizeHeight);
 
-                using (var bitmapScaled = Bitmap.CreateScaledBitmap(imageBitmap, height, NumeroVersao.Width , true))
+                using (var bitmapScaled = Bitmap.CreateScaledBitmap(imageBitmap, height, tamanho, true))
                 {
                     using (MemoryStream outStream = new MemoryStream())
                     {
-
                         imageBitmap.Compress(Bitmap.CompressFormat.Jpeg, 50, outStream);
                         byte[] bytes = outStream.ToArray();
                         imageBitmap.Recycle();
@@ -255,8 +245,6 @@ namespace teste_androidv1
         {
             try
             {
-                //var connection = new SQLiteConnection(System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "bancoteste.db3"));
-
                 using (var connection = new SQLite.SQLiteConnection(System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "bancoteste.db3")))
                 {
                     connection.CreateTable<Categoria>(SQLite.CreateFlags.ImplicitPK | SQLite.CreateFlags.AutoIncPK);
@@ -272,12 +260,6 @@ namespace teste_androidv1
                     connection.Execute("DELETE FROM Sessao");
                 }
 
-
-
-
-
-                //connection.Close();
-                //Toast.MakeText(this, "Database created", ToastLength.Short).Show();
                 return "Database created";
             }
             catch (SQLiteException ex)
